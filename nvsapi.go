@@ -1,5 +1,6 @@
 package one
 
+// NetworkStatus is the API response to a /status call.
 type NetworkStatus struct {
 	Address           string `json:"address"`
 	PublicIdentity    string `json:"publicIdentity"`
@@ -16,6 +17,7 @@ type NetworkStatus struct {
 	Clock        int64  `json:"clock"`
 }
 
+// Network is the data structure that encapsulates a network.
 type Network struct {
 	ID                string   `json:"id"`
 	LegacyNetworkID   string   `json:"nwid"`
@@ -38,6 +40,7 @@ type Network struct {
 	AllowDNS          bool     `json:"allowDNS"`
 }
 
+// Route encapsulates network routes. See Network.
 type Route struct {
 	Target string `json:"target"`
 	Via    string `json:"via"`
@@ -45,6 +48,7 @@ type Route struct {
 	Metric int64  `json:"metric"`
 }
 
+// Peer encapsulates ZeroTier One peers.
 type Peer struct {
 	Address      string `json:"address"`
 	VersionMajor int64  `json:"versionMajor"`
@@ -57,6 +61,7 @@ type Peer struct {
 	Paths []Path `json:"paths"`
 }
 
+// Path is the path on the network.
 type Path struct {
 	Address       string `json:"address"`
 	LastSend      int64  `json:"lastSend"`
@@ -67,21 +72,25 @@ type Path struct {
 	TrustedPathID int64  `json:"trustedPathId"`
 }
 
+// Status returns the status of the ZeroTier One instance
 func (c *Client) Status() (*NetworkStatus, error) {
 	ns := &NetworkStatus{}
 	return ns, c.wrapJSON("/status", ns)
 }
 
+// Networks returns all networks that ZeroTier One knows about.
 func (c *Client) Networks() ([]*Network, error) {
 	nws := []*Network{}
 	return nws, c.wrapJSON("/network", &nws)
 }
 
+// Network queries a specific network.
 func (c *Client) Network(id string) (*Network, error) {
 	nw := &Network{}
 	return nw, c.wrapJSON("/network/"+id, nw)
 }
 
+// Peers queries the peers that ZeroTier One knows about.
 func (c *Client) Peers() ([]*Peer, error) {
 	peers := []*Peer{}
 	return peers, c.wrapJSON("/peer", &peers)

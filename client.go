@@ -10,17 +10,22 @@ import (
 const authHeaderName = "X-ZT1-Auth"
 
 var (
-	APIVersion     = "0.1.0"
-	UserAgent      = fmt.Sprintf("zt-one/%s", APIVersion)
+	// APIVersion is the version of this library
+	APIVersion = "0.1.0"
+	// UserAgent is the entire HTTP User-Agent sent as header.
+	UserAgent = fmt.Sprintf("zt-one/%s", APIVersion)
+	// DefaultBaseURL is the default URL to contact, can be overridden with the (*Client).SetBaseURL() call.
 	DefaultBaseURL = "http://localhost:9993"
 )
 
+// Client is a http client tailored to talk to ZeroTier One.
 type Client struct {
 	baseURL *url.URL
 	apiKey  string
 	client  *http.Client
 }
 
+// NewClient creates a new *Client. An API key must be passed at this time.
 func NewClient(apiKey string) *Client {
 	u, _ := url.ParseRequestURI(DefaultBaseURL)
 	return &Client{
@@ -30,6 +35,7 @@ func NewClient(apiKey string) *Client {
 	}
 }
 
+// SetBaseURL sets the base URL to the value.
 func (c *Client) SetBaseURL(base string) error {
 	u, err := url.ParseRequestURI(base)
 	if err != nil {
