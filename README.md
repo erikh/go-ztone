@@ -38,7 +38,7 @@ func main() {
 
 ## Functionality
 
-`ztone` has a few basic functions, most of them [listed here](https://github.com/zerotier/ZeroTierOne/blob/master/service/README.md), as well as on the [GoDoc](https://pkg.go.dev/github.com/erikh/go-ztone).
+`ztone` has a few basic functions, most of them [listed here](https://github.com/zerotier/ZeroTierOne/blob/master/service/README.md#network-virtualization-service-api), as well as on the [GoDoc](https://pkg.go.dev/github.com/erikh/go-ztone).
 
 ## Example Code
 
