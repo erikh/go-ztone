@@ -1,5 +1,10 @@
 package one
 
+import (
+	"bytes"
+	"fmt"
+)
+
 // NetworkStatus is the API response to a /status call.
 type NetworkStatus struct {
 	Address           string `json:"address"`
@@ -78,20 +83,66 @@ func (c *Client) Status() (*NetworkStatus, error) {
 	return ns, c.wrapJSON("/status", ns)
 }
 
-// Networks returns all networks that ZeroTier One knows about.
-func (c *Client) Networks() ([]*Network, error) {
+// ListNetworks returns all networks that ZeroTier One knows about.
+func (c *Client) ListNetworks() ([]*Network, error) {
 	nws := []*Network{}
 	return nws, c.wrapJSON("/network", &nws)
 }
 
-// Network queries a specific network.
-func (c *Client) Network(id string) (*Network, error) {
+// GetNetwork queries a specific network.
+func (c *Client) GetNetwork(id string) (*Network, error) {
 	nw := &Network{}
 	return nw, c.wrapJSON("/network/"+id, nw)
 }
 
-// Peers queries the peers that ZeroTier One knows about.
-func (c *Client) Peers() ([]*Peer, error) {
+// JoinNetwork attempts to join a network. It will return an error if there is
+// a problem contacting the service.
+func (c *Client) JoinNetwork(id string) error {
+	req, err := c.makeBaseReq("POST", "/network/"+id, bytes.NewBufferString("{}"))
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.do(req)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("Response status was not 200, was %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
+// LeaveNetwork attempts to leave a network. It will return an error if there is
+// a problem contacting the service.
+func (c *Client) LeaveNetwork(id string) error {
+	req, err := c.makeBaseReq("DELETE", "/network/"+id, nil)
+	if err != nil {
+		return err
+	}
+
+	resp, err := c.do(req)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("Response status was not 200, was %d", resp.StatusCode)
+	}
+
+	return nil
+}
+
+// ListPeers queries the peers that ZeroTier One knows about.
+func (c *Client) ListPeers() ([]*Peer, error) {
 	peers := []*Peer{}
 	return peers, c.wrapJSON("/peer", &peers)
+}
+
+// GetPeer queries a specific peer by address.
+func (c *Client) GetPeer(address string) (*Peer, error) {
+	p := &Peer{}
+	return p, c.wrapJSON("/peer/"+address, p)
 }

@@ -3,6 +3,7 @@ package one
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 )
@@ -11,7 +12,7 @@ const authHeaderName = "X-ZT1-Auth"
 
 var (
 	// APIVersion is the version of this library
-	APIVersion = "0.1.0"
+	APIVersion = "0.2.0"
 	// UserAgent is the entire HTTP User-Agent sent as header.
 	UserAgent = fmt.Sprintf("zt-one/%s", APIVersion)
 	// DefaultBaseURL is the default URL to contact, can be overridden with the (*Client).SetBaseURL() call.
@@ -52,13 +53,17 @@ func (c *Client) do(req *http.Request) (*http.Response, error) {
 	return c.client.Do(req)
 }
 
-func (c *Client) wrapJSON(path string, obj interface{}) error {
+func (c *Client) makeBaseReq(method, path string, body io.Reader) (*http.Request, error) {
 	u, err := url.ParseRequestURI(path)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	req, err := http.NewRequest("GET", c.baseURL.ResolveReference(u).String(), nil)
+	return http.NewRequest(method, c.baseURL.ResolveReference(u).String(), body)
+}
+
+func (c *Client) wrapJSON(path string, obj interface{}) error {
+	req, err := c.makeBaseReq("GET", path, nil)
 	if err != nil {
 		return err
 	}

@@ -9,12 +9,12 @@ import (
 
 func main() {
 	c := one.NewClient(os.Getenv("ZEROTIER_ONE_TOKEN"))
-	networks, err := c.Networks()
+	networks, err := c.ListNetworks()
 	if err != nil {
 		panic(err)
 	}
 
-	peers, err := c.Peers()
+	peers, err := c.ListPeers()
 	if err != nil {
 		panic(err)
 	}
